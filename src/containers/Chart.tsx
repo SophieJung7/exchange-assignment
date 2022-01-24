@@ -6,8 +6,9 @@ import {
   UTCTimestamp,
   CrosshairMode,
 } from 'lightweight-charts';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import { TickerSymbolRecoil } from '../recoil/tickerSymbolRecoil';
+import { TimeIntervalRecoil } from '../recoil/timeIntervalRecoil';
 import useGetPriceHistory from '../hooks/useGetPriceHistory';
 import useChartWebSocket from '../hooks/websocket/useChartWebSocket';
 import { TimeInterval } from '../types/chart';
@@ -17,8 +18,8 @@ let candleSeries: ISeriesApi<'Candlestick'> | undefined = undefined;
 
 const Chart = () => {
   const symbol = useRecoilValue(TickerSymbolRecoil);
-  const [timeInterval, setTimeInterval] = useState<TimeInterval>('1m');
-  const history = useGetPriceHistory(symbol, timeInterval);
+  const [timeInterval, setTimeInterval] = useRecoilState(TimeIntervalRecoil);
+  const { priceHistory: history } = useGetPriceHistory(symbol, timeInterval);
   const candleSeriesRef = useRef<any>(null);
   const {
     subscribe: chartSubscribe,

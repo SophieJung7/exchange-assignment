@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useRecoilState } from 'recoil';
+import { AvgPriceRecoil } from '../recoil/avgPriceRecoil';
 import { TickerSymbol } from '../types/tickerSymbol';
 import { PriceHistoryResponse } from '../types/priceHistoryResponse';
 import { PriceHistory, TimeInterval } from '../types/chart';
 
 const useGetPriceHistory = (symbol: TickerSymbol, interval: TimeInterval) => {
   const [priceHistory, setPriceHistory] = useState<PriceHistory>();
+  const [timespanAvgPrice, setTimespanAvgPrice] =
+    useRecoilState(AvgPriceRecoil);
 
   useEffect(() => {
     let unmounted = false;
@@ -43,7 +47,18 @@ const useGetPriceHistory = (symbol: TickerSymbol, interval: TimeInterval) => {
     };
   }, [interval, symbol]);
 
-  return priceHistory;
+  useEffect(() => {
+    if (priceHistory) {
+      let sum = 0;
+      for (let i = 0; i < priceHistory?.length; i += 1) {
+        sum += priceHistory[i].close;
+      }
+      const avg = sum / priceHistory.length;
+      setTimespanAvgPrice(avg);
+    }
+  }, [priceHistory, setTimespanAvgPrice]);
+
+  return { priceHistory, timespanAvgPrice };
 };
 
 export default useGetPriceHistory;

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import { useRecoilValue } from 'recoil';
 import { TickerSymbolRecoil } from '../recoil/tickerSymbolRecoil';
+import { AvgPriceRecoil } from '../recoil/avgPriceRecoil';
 import Dropdown from './ChartDropDown';
 import { TickerSocketResponse } from '../types/ticker';
 import useGet24hrStat from '../hooks/useGet24hrStat';
@@ -17,6 +18,7 @@ const ChartHeader = ({ tickerLastMessage, changeTicker }: Props) => {
   const symbol = useRecoilValue(TickerSymbolRecoil);
   const { p: price } = tickerLastMessage;
   const { avgPrice, priceChange } = useGet24hrStat(symbol);
+  const timespanAvgPrice = useRecoilValue(AvgPriceRecoil);
 
   const isAvgPriceBull = useMemo(() => {
     return priceChange?.split('')[0] !== '-';
@@ -30,14 +32,14 @@ const ChartHeader = ({ tickerLastMessage, changeTicker }: Props) => {
   }, [avgPrice, price]);
 
   return (
-    <div className='flex flex-col md:flex-row w-screen text-gray-100 md:h-12 border-b-2 border-gray-500'>
+    <div className='flex flex-col md:flex-row w-screen text-gray-100 md:h-22 lg:h-12 border-b-2 border-gray-500'>
       <div className='p-3 border-r-2 border-gray-500'>
         <h1 className='text-yellow-300'>Sophie Exchange</h1>
       </div>
       <div className='mr-2 w-full md:w-1/4 border-r-2 border-gray-500 pt-2'>
         <Dropdown changeTicker={changeTicker} />
       </div>
-      <div className='p-1 mr-2 w-full md:w-1/12 border-r-2 border-gray-500'>
+      <div className='p-1 mr-2 w-full sm:w-3/12 md:w-2/12 lg:border-r-2 border-gray-500'>
         <h2 className='text-xs text-gray-400'>24H Average Price</h2>
         <div className='flex flex-row'>
           <h1
@@ -63,10 +65,17 @@ const ChartHeader = ({ tickerLastMessage, changeTicker }: Props) => {
           </div>
         </div>
       </div>
-      <div className='p-1 mr-2 w-full md:w-1/12 border-r-2 border-gray-500'>
+      <div className='p-1 mr-2 w-full sm:w-3/12 md:w-2/12 lg:border-r-2 border-gray-500'>
         <h2 className='text-xs text-gray-400'>Latest Price</h2>
         <div className='flex flex-row'>
-          <h1 className='mr-2'>{parseFloat(price).toFixed(2)}</h1>
+          <h1
+            className={clsx(
+              'mr-2',
+              isLatestPriceBull ? 'text-blue-600' : 'text-red-600'
+            )}
+          >
+            {parseFloat(price).toFixed(2)}
+          </h1>
           <div>
             {isLatestPriceBull ? (
               <AiFillCaretUp
@@ -82,11 +91,10 @@ const ChartHeader = ({ tickerLastMessage, changeTicker }: Props) => {
           </div>
         </div>
       </div>
-      <div className='p-1 mr-2 w-full md:w-1/12 border-r-2 border-gray-500'>
+      <div className='p-1 mr-2 w-full sm:w-3/12 md:w-2/12 lg:border-r-2 border-gray-500 mb-10 md:mb-0'>
         <h2 className='text-xs text-gray-400'>Average Price</h2>
         <div className='flex flex-row'>
-          <h1 className='mr-2'>36,400</h1>
-          <div>X</div>
+          <h1 className='mr-2'>{timespanAvgPrice?.toFixed(2) || '-'}</h1>
         </div>
       </div>
     </div>
