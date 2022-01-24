@@ -1,18 +1,15 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { RecoilRoot, useRecoilState } from 'recoil';
+import React, { useCallback, useEffect } from 'react';
+import { useRecoilState } from 'recoil';
 import './App.css';
 import ChartHeader from './containers/ChartHeader';
+import Chart from './containers/Chart';
 import useTickerWebSocket from './hooks/websocket/useTickerWebSocket';
+import { TickerSymbolRecoil } from './recoil/tickerSymbolRecoil';
 import { TickerSymbol } from './types/tickerSymbol';
 import { currencyList } from './utils/constant';
-import { TickerSymbolRecoil } from './recoil/tickerSymbolRecoil';
 
 function App() {
   const [tickerSymbol, setTickerSymbol] = useRecoilState(TickerSymbolRecoil);
-
-  useEffect(() => {
-    console.log(tickerSymbol);
-  }, [tickerSymbol]);
 
   // Get Ticker
   const {
@@ -47,6 +44,7 @@ function App() {
             tickerLastMessage={tickerLastMessage}
             changeTicker={changeTicker}
           />
+          <Chart />
         </>
       )}
     </>
