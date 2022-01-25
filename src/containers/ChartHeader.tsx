@@ -11,7 +11,7 @@ import { TickerSymbol } from '../types/tickerSymbol';
 
 interface Props {
   tickerLastMessage: TickerSocketResponse;
-  changeTicker: (changedTickerSymbol: TickerSymbol) => void | undefined;
+  changeTicker: (changedTickerSymbol: TickerSymbol) => void;
 }
 
 const ChartHeader = ({ tickerLastMessage, changeTicker }: Props) => {

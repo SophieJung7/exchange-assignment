@@ -5,7 +5,10 @@ let browser, page;
 beforeEach(async () => {
   browser = await puppeteer.launch();
   page = await browser.newPage();
-  await page.goto('http://localhost:3000', { waitUntil: 'load' });
+  const response = await page.goto('http://localhost:3000', {
+    waitUntil: 'load',
+  });
+  expect(response.status()).toBe(200);
   await page.waitForSelector('.company-name');
 });
 
