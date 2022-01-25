@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import clsx from 'clsx';
 import {
   createChart,
   IChartApi,
@@ -44,8 +45,8 @@ const Chart = () => {
         },
         rightPriceScale: {
           scaleMargins: {
-            top: 0.3,
-            bottom: 0.25,
+            top: 0.1,
+            bottom: 0.1,
           },
         },
         crosshair: {
@@ -104,14 +105,15 @@ const Chart = () => {
   return (
     <div className='h-screen text-gray-100 bg-black'>
       <h1 className='ml-2 pt-3 text-xl'>Chart</h1>
-      <div className='w-full h-2 border-b-2 border-gray-500'></div>
       <div className='w-1/2 md:w-1/3 grid grid-cols-5 gap-4 mt-5 ml-3'>
         {timespanRange.map((v) => {
           return (
             <button
               key={v}
               onClick={() => setTimeInterval(v)}
-              className='text-left'
+              className={clsx(
+                v === timeInterval ? 'text-yellow-300' : 'text-white'
+              )}
             >
               {v}
             </button>
