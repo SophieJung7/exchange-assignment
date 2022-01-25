@@ -16,12 +16,12 @@ yarn test
 
 ## API & Websocket
 
-#####Binance API & WS
+##### Binance API & WS
 
-wss://stream.binance.com:9443/ws/${symbol}@kline_1m
-wss://stream.binance.com:9443/ws/${symbol}@trade
-https://api.binance.com/api/v3/ticker/24hr
-https://api.binance.com/api/v3/klines
+- wss://stream.binance.com:9443/ws/${symbol}@kline_1m
+- wss://stream.binance.com:9443/ws/${symbol}@trade
+- https://api.binance.com/api/v3/ticker/24hr
+- https://api.binance.com/api/v3/klines
 
 ## Library
 
