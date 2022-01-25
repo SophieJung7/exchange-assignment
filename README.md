@@ -18,10 +18,10 @@ yarn test
 
 ##### Binance API & WS
 
-- wss://stream.binance.com:9443/ws/${symbol}@kline_1m
-- wss://stream.binance.com:9443/ws/${symbol}@trade
-- https://api.binance.com/api/v3/ticker/24hr
-- https://api.binance.com/api/v3/klines
+- Chart WS: wss://stream.binance.com:9443/ws/${symbol}@kline_1m
+- Latest Price WS: wss://stream.binance.com:9443/ws/${symbol}@trade
+- 24hr Stat for Ticker API: https://api.binance.com/api/v3/ticker/24hr
+- Chart History API: https://api.binance.com/api/v3/klines
 
 ## Library
 
