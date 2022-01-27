@@ -1,5 +1,10 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import clsx from 'clsx';
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useLayoutEffect,
+} from 'react';
 import {
   createChart,
   IChartApi,
@@ -20,13 +25,30 @@ let candleSeries: ISeriesApi<'Candlestick'> | undefined = undefined;
 const Chart = () => {
   const symbol = useRecoilValue(TickerSymbolRecoil);
   const [timeInterval, setTimeInterval] = useRecoilState(TimeIntervalRecoil);
+  const [chartContainerWidth, setChartContainerWidth] = useState<number>(700);
   const { priceHistory: history } = useGetPriceHistory(symbol, timeInterval);
+  const chartContainerRef = useRef<any>(null);
   const candleSeriesRef = useRef<any>(null);
   const {
     subscribe: chartSubscribe,
     unsubscribe: chartUnsubscribe,
     lastJsonMessage: chartLastMessage,
   } = useChartWebSocket(symbol);
+
+  useLayoutEffect(() => {
+    if (chartContainerRef.current) {
+      setChartContainerWidth(chartContainerRef?.current?.clientWidth);
+    }
+  }, []);
+
+  useLayoutEffect(() => {
+    function updateSize() {
+      setChartContainerWidth(chartContainerRef?.current?.clientWidth);
+    }
+    window.addEventListener('resize', updateSize);
+    updateSize();
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
 
   useEffect(() => {
     chartSubscribe(symbol);
@@ -37,7 +59,7 @@ const Chart = () => {
     const chart = createChart(
       document.getElementsByClassName('candle-chart')[0] as HTMLElement,
       {
-        width: window.innerWidth,
+        width: chartContainerWidth * 0.97,
         height: window.innerHeight * 0.8,
         layout: {
           textColor: '#d1d4dc',
@@ -45,8 +67,8 @@ const Chart = () => {
         },
         rightPriceScale: {
           scaleMargins: {
-            top: 0.1,
-            bottom: 0.1,
+            top: 0.3,
+            bottom: 0.25,
           },
         },
         crosshair: {
@@ -79,7 +101,7 @@ const Chart = () => {
       }
     );
     return chart;
-  }, [timeInterval]);
+  }, [chartContainerWidth, timeInterval]);
 
   useEffect(() => {
     if (document && history) {
@@ -103,28 +125,28 @@ const Chart = () => {
   }, [chartLastMessage, fnCreateChart, history]);
 
   return (
-    <div className='h-screen text-gray-100 bg-black'>
+    <div className='text-gray-100 bg-black pl-3' ref={chartContainerRef}>
       <h1 className='ml-2 pt-3 text-xl'>Chart</h1>
-      <div className='w-1/2 md:w-1/3 grid grid-cols-5 gap-4 mt-5 ml-3'>
-        {timespanRange.map((v) => {
-          return (
-            <button
-              key={v}
-              onClick={() => setTimeInterval(v)}
-              className={clsx(
-                v === timeInterval ? 'text-yellow-300' : 'text-white'
-              )}
-            >
-              {v}
-            </button>
-          );
-        })}
-      </div>
-      <div className='candle-chart mt-5'></div>
+      <>
+        <div className='w-1/2 md:w-1/3 grid grid-cols-5 gap-4 ml-3 mt-5'>
+          {timespanRange.map((v) => {
+            return (
+              <button
+                key={v}
+                onClick={() => setTimeInterval(v)}
+                className='text-left'
+              >
+                {v}
+              </button>
+            );
+          })}
+        </div>
+        <div className='candle-chart mt-5'></div>
+      </>
     </div>
   );
 };
 
 const timespanRange: TimeInterval[] = ['1m', '5m', '1h', '1d', '1w'];
 
-export default Chart;
+export default React.memo(Chart);
