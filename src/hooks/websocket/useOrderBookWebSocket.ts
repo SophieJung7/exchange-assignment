@@ -5,7 +5,7 @@ import { TickerSymbol } from '../../types/tickerSymbol';
 
 const useOrderBookWebSocket = (symbol: TickerSymbol) => {
   const { sendJsonMessage, lastMessage, readyState } = useWebSocket(
-    'wss://stream.binance.com:9443/ws/btcusdt@depth10',
+    `wss://stream.binance.com:9443/ws/${symbol}@depth10`,
     {
       retryOnError: true,
       share: true,
